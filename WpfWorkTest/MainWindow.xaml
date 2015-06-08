@@ -3,10 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:custom="clr-namespace:WpfWorkTest.customcontrol"
         Title="MainWindow" Height="600" Width="800">
-    <Grid>
-        <custom:CustomPaging Margin="0,0,393,534" x:Name="page_test"/>
+    <Grid Name="g_grid">
+        <custom:CustomPaging Margin="0,0,236,512" x:Name="page_test" 
+                             PageCount="{Binding Path=PageCount, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true, UpdateSourceTrigger=PropertyChanged}"
+                             ></custom:CustomPaging>
         <Button Content="bt_test" HorizontalAlignment="Left" Margin="104,172,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="104,144,0,0" TextWrapping="Wrap" Text="" Name="tb_1" VerticalAlignment="Top" Width="75"/>
-        <TextBox HorizontalAlignment="Left" Height="117" Margin="383,105,0,0" TextWrapping="Wrap" Text="" x:Name="tb_1_Copy" VerticalAlignment="Top" Width="244"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="104,144,0,0" TextWrapping="Wrap" 
+                 
+                 Name="tb_1" VerticalAlignment="Top" Width="75"/>
+        
+        <TextBox HorizontalAlignment="Left" Height="117" Margin="383,105,0,0" TextWrapping="Wrap" Text="" x:Name="tb_show" VerticalAlignment="Top" Width="244"/>
     </Grid>
 </Window>

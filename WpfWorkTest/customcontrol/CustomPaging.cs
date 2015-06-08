@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,21 +45,115 @@ namespace WpfWorkTest.customcontrol
     ///     <MyNamespace:CustomPaging/>
     ///
     /// </summary>
-    public class CustomPaging : Control
+    public class CustomPaging : Control, ICommandSource
     {
         /// <summary>
         /// 总页数
         /// </summary>
-        private int pageCount = -1;
+        public int PageCount
+        {
+            get 
+            {
+                return (int)GetValue(PageCountProperty); 
+            }
+            set 
+            {
+                SetValue(PageCountProperty, value);
+                this.SetPageCount(value);
+            }
+        }
+
         /// <summary>
         /// 当前页数
         /// </summary>
-        public int PageIndex { get; private set; }
+        public int PageIndex 
+        {
+            get
+            {
+                return (int)GetValue(PageIndexProperty);
+            }
+            private set
+            {
+                SetValue(PageIndexProperty, value);
+            }
+        }
 
         /// <summary>
         /// 当有翻页动作时，会触发此事件
         /// </summary>
         public event PagingEventHandler OnPaging;
+        /// <summary>
+        /// 自定义属性
+        /// </summary>
+        [CategoryAttribute("自定义属性"), DescriptionAttribute("总页数")]
+        public static readonly DependencyProperty PageCountProperty = DependencyProperty.Register("PageCount", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1, new PropertyChangedCallback(OnPageCountChanged)));
+        /// <summary>
+        /// 自定义属性
+        /// </summary>
+        [CategoryAttribute("自定义属性"), DescriptionAttribute("当前页")]
+        public static readonly DependencyProperty PageIndexProperty = DependencyProperty.Register("PageIndex", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1, new PropertyChangedCallback(OnPageCountChanged)));
+
+        /// <summary>
+        /// 当自定义属性的值发生变化时，触发此事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnPageCountChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            try
+            {
+                CustomPaging cp = sender as CustomPaging;
+
+                int newCount = (int)e.NewValue;
+                if (cp != null)
+                {
+                    cp.PageCount = newCount;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        /// <summary>
+        /// 当自定义属性的值发生变化时，触发此事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnPageIndexChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            try
+            {
+                CustomPaging cp = sender as CustomPaging;
+
+                int newCount = (int)e.NewValue;
+                if (cp != null)
+                {
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// 注册路由事件
+        /// </summary>
+        public static readonly RoutedEvent PageIndexChangedEvent = EventManager.RegisterRoutedEvent("PageIndexChanged", RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<int>), typeof(CustomPaging));
+
+        public event RoutedPropertyChangedEventHandler<int> PageIndexChanged
+        {
+            add { AddHandler(PageIndexChangedEvent, value); }
+            remove { RemoveHandler(PageIndexChangedEvent, value); }
+        }
+
+        protected virtual void OnPageIndexChanged(RoutedPropertyChangedEventArgs<int> args)
+        {
+            RaiseEvent(args);
+        }
+
+        
 
         #region 界面存放的元素控件对象
         /// <summary>
@@ -114,6 +209,18 @@ namespace WpfWorkTest.customcontrol
         static CustomPaging()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomPaging), new FrameworkPropertyMetadata(typeof(CustomPaging)));
+            //CommandManager.RegisterClassCommandBinding(typeof(CustomPaging), PageingBinding);
+        }
+
+        //static CommandBinding PageingBinding = new CommandBinding(OnCutCommand);
+
+        private static void OnCutCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var control = sender as CustomPaging;
+            if (control != null)
+            {
+
+            }
         }
 
         #region Override
@@ -239,7 +346,7 @@ namespace WpfWorkTest.customcontrol
                     }
                 case "bt_next":
                     {
-                        if (PageIndex >= this.pageCount)
+                        if (PageIndex >= this.PageCount)
                             return;
 
                         ClickBtNext();
@@ -247,11 +354,11 @@ namespace WpfWorkTest.customcontrol
                     }
                 case "bt_end":
                     {
-                        if (PageIndex >= this.pageCount)
+                        if (PageIndex >= this.PageCount)
                             return;
 
                         /*末尾时考虑只有2页的情况，此时默认选中的是2不是3*/
-                        this.PageIndex = this.pageCount;
+                        this.PageIndex = this.PageCount;
                         if (this.PageIndex == 2)
                         {
                             this.bt_2.Content = this.PageIndex;
@@ -362,7 +469,7 @@ namespace WpfWorkTest.customcontrol
             }
             if (this.preSelNumButton == this.bt_3)
             {
-                if (this.PageIndex >= this.pageCount)
+                if (this.PageIndex >= this.PageCount)
                     return;
 
                 this.PageIndex++;
@@ -425,7 +532,7 @@ namespace WpfWorkTest.customcontrol
                 this.bt_3.Foreground = cNoSelect_word;
             }
             
-            if ((this.PageIndex + 1) < this.pageCount)
+            if ((this.PageIndex + 1) < this.PageCount)
             {
                 MoveToEnd();
             }
@@ -470,7 +577,7 @@ namespace WpfWorkTest.customcontrol
 
             this.PageIndex = int.Parse(this.bt_3.Content.ToString());
 
-            if (this.PageIndex >= this.pageCount)
+            if (this.PageIndex >= this.PageCount)
             {
                 this.bt_3.Background = cSelect_bg;
                 this.bt_3.Foreground = color_white;
@@ -498,7 +605,7 @@ namespace WpfWorkTest.customcontrol
                 this.bt_3.Foreground = cNoSelect_word;
             }
 
-            if (this.PageIndex >= this.pageCount-1 && this.pageCount > 3)
+            if (this.PageIndex >= this.PageCount-1 && this.PageCount > 3)
             {
                 MoveToTop();
             }
@@ -514,7 +621,7 @@ namespace WpfWorkTest.customcontrol
         /// </summary>
         private void MoveToTop()
         {
-            if (this.pageCount > 3)
+            if (this.PageCount > 3)
             {
                 this.lb_1.SetValue(Grid.ColumnProperty, cColumns[2]);
                 this.bt_1.SetValue(Grid.ColumnProperty, cColumns[3]);
@@ -527,7 +634,7 @@ namespace WpfWorkTest.customcontrol
         /// </summary>
         private void MoveToEnd()
         {
-            if (this.pageCount > 3)
+            if (this.PageCount > 3)
             {
                 this.bt_1.SetValue(Grid.ColumnProperty, cColumns[2]);
                 this.bt_2.SetValue(Grid.ColumnProperty, cColumns[3]);
@@ -547,7 +654,6 @@ namespace WpfWorkTest.customcontrol
             {
                 return;
             }
-            this.pageCount = count;
 
             if (count == 1)
             {
@@ -630,6 +736,21 @@ namespace WpfWorkTest.customcontrol
             this.PageIndex = 1;
         }
 
+
+        ICommand ICommandSource.Command
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        object ICommandSource.CommandParameter
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IInputElement ICommandSource.CommandTarget
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 
     public delegate void PagingEventHandler(PagingEventArgs e);
