@@ -27,7 +27,7 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
-        <TextBlock Name="tb_title" HorizontalAlignment="Left" Margin="10,6,0,0" TextWrapping="Wrap" Text="{Binding Title}" FontSize="20" FontWeight="Bold" VerticalAlignment="Top" Height="28" Width="300"/>
+        <TextBlock Name="tb_title" HorizontalAlignment="Left" Margin="10,6,0,0" TextWrapping="Wrap" Text="{Binding Caption, Mode=OneWay}" FontSize="20" FontWeight="Bold" VerticalAlignment="Top" Height="28" Width="300"/>
 
         <Canvas Name="cav_show" Grid.Row="2" Grid.RowSpan="1" Margin="0, 0, 0, 0">
             <Canvas Name="cav_success" Height="44.674" Width="44.674" Canvas.Left="16" Canvas.Top="20">
@@ -42,7 +42,7 @@
                 <Path Data="M21.936,4.32L15.15,11.147 21.936,17.933C22.22,18.216,22.22,18.676,21.936,18.961L18.855,22.04C18.572,22.324,18.113,22.324,17.829,22.04L11.055,15.266 4.32,22.04C4.037,22.324,3.577,22.324,3.294,22.04L0.213,18.961C-0.071,18.676,-0.071,18.216,0.213,17.933L6.947,11.159 0.213,4.425C-0.071,4.142,-0.071,3.682,0.213,3.398L3.294,0.318C3.577,0.034,4.037,0.034,4.32,0.318L11.042,7.04 17.829,0.213C18.113,-0.071,18.572,-0.071,18.855,0.213L21.936,3.293C22.22,3.576,22.22,4.036,21.936,4.32" 
                       Fill="White" Height="22.253" Canvas.Left="11" Canvas.Top="11.21" Width="22.149"/>
             </Canvas>
-            <TextBlock x:Name="tb_msg" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Message}" FontSize="18" VerticalAlignment="Top" Canvas.Left="76" Canvas.Top="28" Height="26" Width="350"/>
+            <TextBlock x:Name="tb_msg" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Message, Mode=OneWay}" FontSize="18" VerticalAlignment="Top" Canvas.Left="76" Canvas.Top="28" Height="26" Width="350"/>
         </Canvas>
 
         <Button Name="bt_ok" Grid.Row="4" Grid.RowSpan="1" Width="56" Height="28" Margin="244,7,76,8" Cursor="Hand" Click="bt_ok_Click">

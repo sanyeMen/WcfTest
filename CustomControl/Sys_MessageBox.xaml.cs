@@ -26,7 +26,7 @@ namespace CustomControl
         /// <summary>
         /// 标题
         /// </summary>
-        public string Title { get; set; }
+        public string Caption { get; set; }
 
         /// <summary>
         /// 信息
@@ -34,17 +34,19 @@ namespace CustomControl
         public string Message { get; set; }
         #endregion
 
-        private Sys_MessageBox(string title, string message, bool? isSuccess, bool isOkCancel)
+        private Sys_MessageBox(string title, string message, bool? isSuccess, bool isOnlyOk)
         {
             InitializeComponent();
 
-            this.Title = title;
+            this.DataContext = this;
+
+            this.Caption = title;
             this.Message = message;
 
-            this.tb_title.Text = title;
-            this.tb_msg.Text = message;
+            //this.tb_title.Text = title;
+            //this.tb_msg.Text = message;
 
-            OnlyOk(isOkCancel);
+            OnlyOk(isOnlyOk);
             if (isSuccess.HasValue)
             {
                 Pic(true, (bool)isSuccess);
@@ -56,39 +58,104 @@ namespace CustomControl
         }
 
         #region 静态函数
-        public static MessageBoxResult Show(Window owner, string message)
+        /// <summary>
+        /// 弹出普通的提示框
+        /// </summary>
+        /// <param name="owner">弹出框的父窗体，如果不需要可以传null</param>
+        /// <param name="message">要显示的消息</param>
+        /// <param name="caption">提示框的标题</param>
+        /// <param name="isConfirm">是否需要确认</param>
+        /// <returns></returns>
+        public static bool? Show(Window owner, string message, string caption, bool isConfirm)
         {
-            //Sys_MessageBox box = new Sys_MessageBox();
-
-            return MessageBoxResult.OK;
-        }
-        public static MessageBoxResult Show(Window owner, string message, string title)
-        {
-            Sys_MessageBox sys_box = new Sys_MessageBox(title, message, null, false);
+            Sys_MessageBox sys_box;
+            if (isConfirm)
+            {
+                sys_box = new Sys_MessageBox(caption, message, null, false);
+            }
+            else
+            {
+                sys_box = new Sys_MessageBox(caption, message, null, true);
+            }
             sys_box.Width = 376;
             sys_box.Height = 168;
-            sys_box.ShowDialog();
-            sys_box.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-
-            HwndSource winformWindow =
-            (System.Windows.Interop.HwndSource.FromDependencyObject(owner) as System.Windows.Interop.HwndSource);
-            if (winformWindow != null)
-                new WindowInteropHelper(sys_box) { Owner = winformWindow.Handle };
-
-            sys_box.Show();
-
-            return MessageBoxResult.OK;
+            if (owner != null)
+            {
+                sys_box.Owner = owner;
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            sys_box.ShowInTaskbar = false;
+            return sys_box.ShowDialog();
         }
-
-        public static MessageBoxResult Show(string message, string title, bool isSuccess)
+        /// <summary>
+        /// 弹出成功提示框
+        /// </summary>
+        /// <param name="owner">弹出框的父窗体，如果不需要可以传null</param>
+        /// <param name="message">要显示的消息</param>
+        /// <param name="caption">提示框的标题</param>
+        /// <param name="isConfirm">是否需要确认</param>
+        /// <returns></returns>
+        public static bool? ShowSuccess(Window owner, string message, string caption, bool isConfirm)
         {
-            return MessageBoxResult.OK;
+            Sys_MessageBox sys_box;
+            if (isConfirm)
+            {
+                sys_box = new Sys_MessageBox(caption, message, true, false);
+            }
+            else
+            {
+                sys_box = new Sys_MessageBox(caption, message, true, true);
+            }
+            sys_box.Width = 376;
+            sys_box.Height = 168;
+            if (owner != null)
+            {
+                sys_box.Owner = owner;
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            sys_box.ShowInTaskbar = false;
+            return sys_box.ShowDialog();
         }
-
-        public static MessageBoxResult Show(string message, bool isSuccess)
+        /// <summary>
+        /// 弹出失败提示框
+        /// </summary>
+        /// <param name="owner">弹出框的父窗体，如果不需要可以传null</param>
+        /// <param name="message">要显示的消息</param>
+        /// <param name="caption">提示框的标题</param>
+        /// <param name="isConfirm">是否需要确认</param>
+        /// <returns></returns>
+        public static bool? ShowError(Window owner, string message, string caption, bool isConfirm)
         {
-            return MessageBoxResult.OK;
+            Sys_MessageBox sys_box;
+            if (isConfirm)
+            {
+                sys_box = new Sys_MessageBox(caption, message, true, false);
+            }
+            else
+            {
+                sys_box = new Sys_MessageBox(caption, message, true, true);
+            }
+            sys_box.Width = 376;
+            sys_box.Height = 168;
+            if (owner != null)
+            {
+                sys_box.Owner = owner;
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                sys_box.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            sys_box.ShowInTaskbar = false;
+            return sys_box.ShowDialog();
         }
         #endregion
 
@@ -101,16 +168,19 @@ namespace CustomControl
 
         private void bt_ok_Click(object sender, RoutedEventArgs e)
         {
+            this.DialogResult = true;
             this.Close();
         }
 
         private void bt_cancle_Click(object sender, RoutedEventArgs e)
         {
+            this.DialogResult = false;
             this.Close();
         }
 
         private void bt_close_Click(object sender, RoutedEventArgs e)
         {
+            this.DialogResult = false;
             this.Close();
         }
 
