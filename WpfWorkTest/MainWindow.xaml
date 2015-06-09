@@ -2,16 +2,29 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:custom="clr-namespace:WpfWorkTest.customcontrol"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         Title="MainWindow" Height="600" Width="800">
     <Grid Name="g_grid">
         <custom:CustomPaging Margin="0,0,236,512" x:Name="page_test" 
                              PageCount="{Binding Path=PageCount, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true, UpdateSourceTrigger=PropertyChanged}"
-                             ></custom:CustomPaging>
-        <Button Content="bt_test" HorizontalAlignment="Left" Margin="104,172,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+                             >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="OnPaging">
+                    <i:InvokeCommandAction Command="{Binding PagingCommand}" CommandParameter="{Binding PageIndex, ElementName=page_test}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </custom:CustomPaging>
+        <Button Content="bt_test" HorizontalAlignment="Left" Margin="104,172,0,0" VerticalAlignment="Top" Width="75" Name="bt_test">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <i:InvokeCommandAction Command="{Binding ButtonCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="104,144,0,0" TextWrapping="Wrap" 
-                 
-                 Name="tb_1" VerticalAlignment="Top" Width="75"/>
-        
+                 Name="tb_1" VerticalAlignment="Top" Width="75">
+        </TextBox>
+
         <TextBox HorizontalAlignment="Left" Height="117" Margin="383,105,0,0" TextWrapping="Wrap" Text="" x:Name="tb_show" VerticalAlignment="Top" Width="244"/>
     </Grid>
 </Window>

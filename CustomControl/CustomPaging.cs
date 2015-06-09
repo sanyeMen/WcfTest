@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,16 +50,75 @@ namespace CustomControl
         /// <summary>
         /// 总页数
         /// </summary>
-        private int pageCount = -1;
+        public int PageCount
+        {
+            get
+            {
+                return (int)GetValue(PageCountProperty);
+            }
+            set
+            {
+                SetValue(PageCountProperty, value);
+                this.SetPageCount(value);
+            }
+        }
+
         /// <summary>
         /// 当前页数
         /// </summary>
-        public int PageIndex { get; private set; }
+        public int PageIndex
+        {
+            get
+            {
+                return (int)GetValue(PageIndexProperty);
+            }
+            private set
+            {
+                SetValue(PageIndexProperty, value);
+            }
+        }
 
         /// <summary>
         /// 当有翻页动作时，会触发此事件
         /// </summary>
-        public event PagingEventHandler OnPaging;
+        [Category("Behavior")]
+        public event RoutedEventHandler OnPaging;
+
+        #region 依赖属性
+        /// <summary>
+        /// 自定义依赖属性
+        /// </summary>
+        [CategoryAttribute("自定义属性"), DescriptionAttribute("总页数")]
+        public static readonly DependencyProperty PageCountProperty = DependencyProperty.Register("PageCount", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1, new PropertyChangedCallback(OnPageCountChanged)));
+        /// <summary>
+        /// 当自定义属性的值发生变化时，触发此事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnPageCountChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            try
+            {
+                CustomPaging cp = sender as CustomPaging;
+
+                int newCount = (int)e.NewValue;
+                if (cp != null)
+                {
+                    cp.PageCount = newCount;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// 自定义依赖属性
+        /// </summary>
+        [CategoryAttribute("自定义属性"), DescriptionAttribute("当前选中页数")]
+        public static readonly DependencyProperty PageIndexProperty = DependencyProperty.Register("PageIndex", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1));
+        #endregion
 
         #region 界面存放的元素控件对象
         /// <summary>
@@ -175,7 +235,7 @@ namespace CustomControl
             if (bt == null)
             {
                 PagingEventArgs pea = new PagingEventArgs() { pageIndex = -1, ex = new ArgumentNullException("未找到点击按钮的对象") };
-                OnPaging(pea);
+                OnPaging(this, pea);
                 return;
             }
 
@@ -207,7 +267,7 @@ namespace CustomControl
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                         if (OnPaging != null)
                         {
-                            OnPaging(pea);
+                            OnPaging(this, pea);
                         }
                         return;
                     }
@@ -239,7 +299,7 @@ namespace CustomControl
                     }
                 case "bt_next":
                     {
-                        if (PageIndex >= this.pageCount)
+                        if (PageIndex >= this.PageCount)
                             return;
 
                         ClickBtNext();
@@ -247,11 +307,11 @@ namespace CustomControl
                     }
                 case "bt_end":
                     {
-                        if (PageIndex >= this.pageCount)
+                        if (PageIndex >= this.PageCount)
                             return;
 
                         /*末尾时考虑只有2页的情况，此时默认选中的是2不是3*/
-                        this.PageIndex = this.pageCount;
+                        this.PageIndex = this.PageCount;
                         if (this.PageIndex == 2)
                         {
                             this.bt_2.Content = this.PageIndex;
@@ -284,7 +344,7 @@ namespace CustomControl
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                         if (OnPaging != null)
                         {
-                            OnPaging(pea);
+                            OnPaging(this, pea);
                         }
 
                         return;
@@ -292,7 +352,7 @@ namespace CustomControl
                 default:
                     {
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = -1, ex = new Exception("未知的点击对象，Name: " + name) };
-                        OnPaging(pea);
+                        OnPaging(this, pea);
                         break;
                     }
             }
@@ -329,7 +389,7 @@ namespace CustomControl
                 PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                 if (OnPaging != null)
                 {
-                    OnPaging(pea);
+                    OnPaging(this, pea);
                 }
                 return;
             }
@@ -362,7 +422,7 @@ namespace CustomControl
             }
             if (this.preSelNumButton == this.bt_3)
             {
-                if (this.PageIndex >= this.pageCount)
+                if (this.PageIndex >= this.PageCount)
                     return;
 
                 this.PageIndex++;
@@ -383,7 +443,7 @@ namespace CustomControl
                 PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                 if (OnPaging != null)
                 {
-                    OnPaging(pea);
+                    OnPaging(this, pea);
                 }
                 return;
             }
@@ -425,14 +485,14 @@ namespace CustomControl
                 this.bt_3.Foreground = cNoSelect_word;
             }
 
-            if ((this.PageIndex + 1) < this.pageCount)
+            if ((this.PageIndex + 1) < this.PageCount)
             {
                 MoveToEnd();
             }
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -455,7 +515,7 @@ namespace CustomControl
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -470,7 +530,7 @@ namespace CustomControl
 
             this.PageIndex = int.Parse(this.bt_3.Content.ToString());
 
-            if (this.PageIndex >= this.pageCount)
+            if (this.PageIndex >= this.PageCount)
             {
                 this.bt_3.Background = cSelect_bg;
                 this.bt_3.Foreground = color_white;
@@ -498,14 +558,14 @@ namespace CustomControl
                 this.bt_3.Foreground = cNoSelect_word;
             }
 
-            if (this.PageIndex >= this.pageCount - 1 && this.pageCount > 3)
+            if (this.PageIndex >= this.PageCount - 1 && this.PageCount > 3)
             {
                 MoveToTop();
             }
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -514,7 +574,7 @@ namespace CustomControl
         /// </summary>
         private void MoveToTop()
         {
-            if (this.pageCount > 3)
+            if (this.PageCount > 3)
             {
                 this.lb_1.SetValue(Grid.ColumnProperty, cColumns[2]);
                 this.bt_1.SetValue(Grid.ColumnProperty, cColumns[3]);
@@ -527,7 +587,7 @@ namespace CustomControl
         /// </summary>
         private void MoveToEnd()
         {
-            if (this.pageCount > 3)
+            if (this.PageCount > 3)
             {
                 this.bt_1.SetValue(Grid.ColumnProperty, cColumns[2]);
                 this.bt_2.SetValue(Grid.ColumnProperty, cColumns[3]);
@@ -541,13 +601,12 @@ namespace CustomControl
         /// 根据总页数，设置控件位置
         /// </summary>
         /// <param name="count"></param>
-        public void SetPageCount(int count)
+        private void SetPageCount(int count)
         {
             if (count < 0)
             {
                 return;
             }
-            this.pageCount = count;
 
             if (count == 1)
             {
@@ -629,12 +688,11 @@ namespace CustomControl
             this.bt_3.Foreground = cNoSelect_word;
             this.PageIndex = 1;
         }
-
     }
 
     public delegate void PagingEventHandler(PagingEventArgs e);
 
-    public class PagingEventArgs
+    public class PagingEventArgs : RoutedEventArgs
     {
         /// <summary>
         /// 当前翻到的页数

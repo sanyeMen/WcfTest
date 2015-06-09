@@ -45,7 +45,7 @@ namespace WpfWorkTest.customcontrol
     ///     <MyNamespace:CustomPaging/>
     ///
     /// </summary>
-    public class CustomPaging : Control, ICommandSource
+    public class CustomPaging : Control
     {
         /// <summary>
         /// 总页数
@@ -66,7 +66,7 @@ namespace WpfWorkTest.customcontrol
         /// <summary>
         /// 当前页数
         /// </summary>
-        public int PageIndex 
+        public int PageIndex
         {
             get
             {
@@ -81,18 +81,15 @@ namespace WpfWorkTest.customcontrol
         /// <summary>
         /// 当有翻页动作时，会触发此事件
         /// </summary>
-        public event PagingEventHandler OnPaging;
+        [Category("Behavior")]
+        public event RoutedEventHandler OnPaging;
+
+        #region 依赖属性
         /// <summary>
-        /// 自定义属性
+        /// 自定义依赖属性
         /// </summary>
         [CategoryAttribute("自定义属性"), DescriptionAttribute("总页数")]
         public static readonly DependencyProperty PageCountProperty = DependencyProperty.Register("PageCount", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1, new PropertyChangedCallback(OnPageCountChanged)));
-        /// <summary>
-        /// 自定义属性
-        /// </summary>
-        [CategoryAttribute("自定义属性"), DescriptionAttribute("当前页")]
-        public static readonly DependencyProperty PageIndexProperty = DependencyProperty.Register("PageIndex", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1, new PropertyChangedCallback(OnPageCountChanged)));
-
         /// <summary>
         /// 当自定义属性的值发生变化时，触发此事件
         /// </summary>
@@ -115,45 +112,13 @@ namespace WpfWorkTest.customcontrol
 
             }
         }
-        /// <summary>
-        /// 当自定义属性的值发生变化时，触发此事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void OnPageIndexChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            try
-            {
-                CustomPaging cp = sender as CustomPaging;
-
-                int newCount = (int)e.NewValue;
-                if (cp != null)
-                {
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
 
         /// <summary>
-        /// 注册路由事件
+        /// 自定义依赖属性
         /// </summary>
-        public static readonly RoutedEvent PageIndexChangedEvent = EventManager.RegisterRoutedEvent("PageIndexChanged", RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<int>), typeof(CustomPaging));
-
-        public event RoutedPropertyChangedEventHandler<int> PageIndexChanged
-        {
-            add { AddHandler(PageIndexChangedEvent, value); }
-            remove { RemoveHandler(PageIndexChangedEvent, value); }
-        }
-
-        protected virtual void OnPageIndexChanged(RoutedPropertyChangedEventArgs<int> args)
-        {
-            RaiseEvent(args);
-        }
-
-        
+        [CategoryAttribute("自定义属性"), DescriptionAttribute("当前选中页数")]
+        public static readonly DependencyProperty PageIndexProperty = DependencyProperty.Register("PageIndex", typeof(int), typeof(CustomPaging), new PropertyMetadata(-1));
+        #endregion
 
         #region 界面存放的元素控件对象
         /// <summary>
@@ -209,18 +174,6 @@ namespace WpfWorkTest.customcontrol
         static CustomPaging()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomPaging), new FrameworkPropertyMetadata(typeof(CustomPaging)));
-            //CommandManager.RegisterClassCommandBinding(typeof(CustomPaging), PageingBinding);
-        }
-
-        //static CommandBinding PageingBinding = new CommandBinding(OnCutCommand);
-
-        private static void OnCutCommand(object sender, ExecutedRoutedEventArgs e)
-        {
-            var control = sender as CustomPaging;
-            if (control != null)
-            {
-
-            }
         }
 
         #region Override
@@ -282,7 +235,7 @@ namespace WpfWorkTest.customcontrol
             if (bt == null)
             { 
                 PagingEventArgs pea = new PagingEventArgs(){ pageIndex =-1, ex = new ArgumentNullException("未找到点击按钮的对象") };
-                OnPaging(pea);
+                OnPaging(this, pea);
                 return;
             }
 
@@ -314,7 +267,7 @@ namespace WpfWorkTest.customcontrol
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                         if (OnPaging != null)
                         {
-                            OnPaging(pea);
+                            OnPaging(this, pea);
                         }
                         return;
                     }
@@ -391,7 +344,7 @@ namespace WpfWorkTest.customcontrol
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                         if (OnPaging != null)
                         {
-                            OnPaging(pea);
+                            OnPaging(this, pea);
                         }
 
                         return;
@@ -399,7 +352,7 @@ namespace WpfWorkTest.customcontrol
                 default:
                     {
                         PagingEventArgs pea = new PagingEventArgs() { pageIndex = -1, ex = new Exception("未知的点击对象，Name: " + name) };
-                        OnPaging(pea);
+                        OnPaging(this, pea);
                         break;
                     }
             }
@@ -436,7 +389,7 @@ namespace WpfWorkTest.customcontrol
                 PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                 if (OnPaging != null)
                 {
-                    OnPaging(pea);
+                    OnPaging(this, pea);
                 }
                 return;
             }
@@ -490,7 +443,7 @@ namespace WpfWorkTest.customcontrol
                 PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
                 if (OnPaging != null)
                 {
-                    OnPaging(pea);
+                    OnPaging(this, pea);
                 }
                 return;
             }
@@ -539,7 +492,7 @@ namespace WpfWorkTest.customcontrol
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -562,7 +515,7 @@ namespace WpfWorkTest.customcontrol
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -612,7 +565,7 @@ namespace WpfWorkTest.customcontrol
             PagingEventArgs pea = new PagingEventArgs() { pageIndex = this.PageIndex };
             if (OnPaging != null)
             {
-                OnPaging(pea);
+                OnPaging(this, pea);
             }
         }
 
@@ -648,7 +601,7 @@ namespace WpfWorkTest.customcontrol
         /// 根据总页数，设置控件位置
         /// </summary>
         /// <param name="count"></param>
-        public void SetPageCount(int count)
+        private void SetPageCount(int count)
         {
             if (count < 0)
             {
@@ -735,27 +688,11 @@ namespace WpfWorkTest.customcontrol
             this.bt_3.Foreground = cNoSelect_word;
             this.PageIndex = 1;
         }
-
-
-        ICommand ICommandSource.Command
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        object ICommandSource.CommandParameter
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        IInputElement ICommandSource.CommandTarget
-        {
-            get { throw new NotImplementedException(); }
-        }
     }
 
     public delegate void PagingEventHandler(PagingEventArgs e);
 
-    public class PagingEventArgs
+    public class PagingEventArgs : RoutedEventArgs
     {
         /// <summary>
         /// 当前翻到的页数

@@ -26,8 +26,8 @@ namespace WpfWorkTest
         public MainWindow()
         {
             InitializeComponent();
-            this.page_test.OnPaging += Paging;
-            this.g_grid.DataContext = viewTest;
+            //this.page_test.OnPaging += Paging;
+            this.DataContext = viewTest;
             viewTest.PageCount = "50";
         }
 
@@ -40,6 +40,11 @@ namespace WpfWorkTest
         {
             this.g_grid.DataContext = viewTest;
             viewTest.PageCount = "80";
+        }
+
+        private void page_test_PageIndexChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+        {
+            
         }
     }
 }
