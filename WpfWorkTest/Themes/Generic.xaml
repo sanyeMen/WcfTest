@@ -3,12 +3,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:WpfWorkTest.customcontrol">
 
-    <ControlTemplate x:Key="bt_corner" TargetType="Button">
-        <Border BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" Background="{TemplateBinding Control.Background}" CornerRadius="5, 5, 5, 5" Name="PART_Background">
-            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center" />
-        </Border>
-    </ControlTemplate>
-
+    <Style TargetType="Button" x:Key="bt_paging_in" x:Name="bt_paging_in_name">
+        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="Foreground" Value="#FF2775B4"></Setter>
+        <Setter Property="BorderBrush" Value="#FFB5B5B6"></Setter>
+        <Setter Property="FontSize" Value="25"></Setter>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
+        <Setter Property="Cursor" Value="Hand"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" Background="{TemplateBinding Control.Background}" CornerRadius="5, 5, 5, 5" Name="PART_Background">
+                        <!--<ContentPresenter Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="0, 0, 0, 0"/>-->
+                        <Label Content="{TemplateBinding ContentControl.Content}" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                               FontSize="{TemplateBinding ContentControl.FontSize}" FontWeight="{TemplateBinding ContentControl.FontWeight}" Width="{TemplateBinding ContentControl.Width}"
+                               Height="{TemplateBinding ContentControl.Height}" Margin="3, 3, 3, 3" Foreground="{TemplateBinding ContentControl.Foreground}" FontFamily="{TemplateBinding ContentControl.FontFamily}"></Label>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style TargetType="{x:Type local:CustomPaging}">
         <Setter Property="Template">
             <Setter.Value>
@@ -35,26 +49,26 @@
                                 <ColumnDefinition Width="25*"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="bt_first" Grid.Column="0" Background="White" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" Cursor="Hand">
+                            <Button x:Name="bt_first" Grid.Column="0" Style="{StaticResource bt_paging_in}">
                                 <Button.Content>
                                     <Path Data="M18.175,0L3.639,9.672 3.639,0 0,0 0,21.769 3.639,21.769 3.639,12.093 18.175,21.764 18.175,14.96 10.453,10.882 18.175,6.803z" Fill="#FF2775B4" Stretch="Uniform" Margin="6, 6, 6, 6"/>
                                 </Button.Content>
                             </Button>
-                            <Button x:Name="bt_pre" Grid.Column="2" Background="White" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" Cursor="Hand">
+                            <Button x:Name="bt_pre" Grid.Column="2" Style="{StaticResource bt_paging_in}">
                                 <Button.Content>
                                     <Path Data="M8.628,10.881L16.355,14.962 16.355,21.762 0,10.881 16.355,0 16.355,6.801z" Fill="#FF237DC2" Stretch="Uniform" Margin="6, 6, 6, 6"/>
                                 </Button.Content>
                             </Button>
-                            <Button x:Name="bt_1" Grid.Column="4" Content="1" Background="White" Foreground="#FF2775B4" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" FontSize="16" FontWeight="Bold" Cursor="Hand"></Button>
-                            <Button x:Name="bt_2" Grid.Column="6" Content="2" Background="White" Foreground="#FF2775B4" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" FontSize="16" FontWeight="Bold" Cursor="Hand"></Button>
-                            <Button x:Name="bt_3" Grid.Column="8" Content="3" Background="White" Foreground="#FF2775B4" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" FontSize="16" FontWeight="Bold" Cursor="Hand"></Button>
+                            <Button x:Name="bt_1" Grid.Column="4" Content="1" Style="{StaticResource bt_paging_in}"></Button>
+                            <Button x:Name="bt_2" Grid.Column="6" Content="2" Style="{StaticResource bt_paging_in}"></Button>
+                            <Button x:Name="bt_3" Grid.Column="8" Content="3" Style="{StaticResource bt_paging_in}"></Button>
                             <Label x:Name="lb_1" Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center">...</Label>
-                            <Button x:Name="bt_next" Grid.Column="12" Background="White" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" Cursor="Hand">
+                            <Button x:Name="bt_next" Grid.Column="12" Style="{StaticResource bt_paging_in}">
                                 <Button.Content>
                                     <Path Data="M7.727,10.882L0,6.802 0,0 16.355,10.882 0,21.762 0,14.962z" Fill="#FF237DC2" Stretch="Uniform" Margin="6, 6, 6, 6"/>
                                 </Button.Content>
                             </Button>
-                            <Button x:Name="bt_end" Grid.Column="14" Background="White" BorderBrush="#FFB5B5B6" Template="{StaticResource bt_corner}" Cursor="Hand">
+                            <Button x:Name="bt_end" Grid.Column="14" Style="{StaticResource bt_paging_in}">
                                 <Button.Content>
                                     <Path Data="M14.536,0L14.536,9.677 0,0.005 0,6.809 7.722,10.887 0,14.966 0,21.769 14.536,12.097 14.536,21.769 18.175,21.769 18.175,0z" Fill="#FF2775B4" Stretch="Uniform" Margin="6, 6, 6, 6"/>
                                 </Button.Content>

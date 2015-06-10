@@ -27,7 +27,7 @@ namespace WpfWorkTest.viewModel
 
         public void Do(int? e)
         {
-            Sys_MessageBox.ShowSuccess(Application.Current.Windows[0], "信息我我我我我我我我我哦我我我我我我哦我我我我哦我", "标题：", true);
+            CustomControl.Sys_MessageBox.ShowSuccess(Application.Current.Windows[0], "提示信息", "标题：", true);
         }
     }
 }
